@@ -10,4 +10,5 @@ class BloggingAppApplicationTests {
 	void contextLoads() {
 	}
 
+
 }
