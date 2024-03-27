@@ -1,12 +1,16 @@
 package com.devharika.demo.services.impl;
 
+import com.devharika.demo.blogrepositories.RoleRepo;
 import com.devharika.demo.blogrepositories.UserRepo;
+import com.devharika.demo.config.AppConstants;
+import com.devharika.demo.entities.Role;
 import com.devharika.demo.entities.User;
 import com.devharika.demo.payloads.UserDto;
 import com.devharika.demo.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.devharika.demo.exceptions.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,10 +20,32 @@ import java.util.stream.Collectors;
 @Validated
 public class UserServiceImpl implements UserService {
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private UserRepo userRepo;
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private RoleRepo roleRepo;
+
+    @Override
+    public UserDto registerNewUser(UserDto userDto) {
+        User user = this.modelMapper.map(userDto, User.class);
+
+        // encoded the password
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+
+        // roles
+        Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+
+        user.getRoles().add(role);
+
+        User newUser = this.userRepo.save(user);
+
+        return this.modelMapper.map(newUser, UserDto.class);
+    }
+
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = this.dtoToUser(userDto);

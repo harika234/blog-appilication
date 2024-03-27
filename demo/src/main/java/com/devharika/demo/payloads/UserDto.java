@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+import com.devharika.demo.entities.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -50,5 +51,7 @@ public class UserDto {
     public void setPassword(String password) {
         this.password=password;
     }
+
+    private  Set<RoleDto> roles = new HashSet<>();
 
 }
